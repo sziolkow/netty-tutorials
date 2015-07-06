@@ -22,6 +22,11 @@ public class ChatClient {
 
     private final int port;
 
+    /**
+     *
+     * @param host
+     * @param port
+     */
     public ChatClient(String host, int port) {
         this.host = host;
         this.port = port;
