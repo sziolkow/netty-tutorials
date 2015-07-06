@@ -25,5 +25,8 @@
         <module name="first-netty" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="first-netty" target="1.7" />
+    </bytecodeTargetLevel>
   </component>
 </project>
