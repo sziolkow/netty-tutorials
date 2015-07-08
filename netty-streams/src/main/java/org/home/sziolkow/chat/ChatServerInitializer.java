@@ -14,11 +14,16 @@ import io.netty.handler.codec.bytes.ByteArrayEncoder;
 public class ChatServerInitializer extends ChannelInitializer<SocketChannel> {
 
     @Override
-    protected void initChannel(SocketChannel socketChannel) throws Exception {
-        ChannelPipeline pipeline = socketChannel.pipeline();
-        pipeline.addLast("framer", new LengthFieldBasedFrameDecoder(100, 0,2,0,2));
-        pipeline.addLast("decoder", new ByteArrayDecoder());
-        pipeline.addLast("encoder", new ByteArrayEncoder());
+    public void initChannel(SocketChannel ch) throws Exception {
+        ChannelPipeline pipeline = ch.pipeline();
+
+        pipeline.addLast("frameEncoder",
+                new LengthFieldBasedFrameDecoder(1048576, 0, 4, 0, 4));
+        pipeline.addLast("bytesDecoder",
+                new ByteArrayDecoder());
+        //pipeline.addLast("frameEncoder", new LengthFieldPrepender(4));
+
+        pipeline.addLast("bytesEncoder", new ByteArrayEncoder());
         pipeline.addLast("handler", new ChatServerHandler());
     }
 }

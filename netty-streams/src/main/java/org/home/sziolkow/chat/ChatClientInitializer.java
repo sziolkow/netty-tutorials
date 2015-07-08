@@ -3,21 +3,23 @@ package org.home.sziolkow.chat;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
-import io.netty.handler.codec.DelimiterBasedFrameDecoder;
-import io.netty.handler.codec.Delimiters;
-import io.netty.handler.codec.string.StringDecoder;
-import io.netty.handler.codec.string.StringEncoder;
+import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
+import io.netty.handler.codec.LengthFieldPrepender;
+import io.netty.handler.codec.bytes.ByteArrayDecoder;
+import io.netty.handler.codec.bytes.ByteArrayEncoder;
 
-/**
- * Created by slawek on 06/07/15.
- */
 public class ChatClientInitializer extends ChannelInitializer<SocketChannel> {
 
-    @Override protected void initChannel(SocketChannel socketChannel) throws Exception {
-        ChannelPipeline pipeline =  socketChannel.pipeline();
-        pipeline.addLast("framer", new DelimiterBasedFrameDecoder(8192, Delimiters.lineDelimiter()));
-        pipeline.addLast("decoder", new StringDecoder());
-        pipeline.addLast("encoder", new StringEncoder());
+    @Override
+    public void initChannel(SocketChannel ch) throws Exception {
+        ChannelPipeline pipeline = ch.pipeline();
+
+        pipeline.addLast("frameDecoder",
+                new LengthFieldBasedFrameDecoder(1048576, 0, 4, 0, 4));
+        pipeline.addLast("bytesDecoder",
+                new ByteArrayDecoder());
+        pipeline.addLast("frameEncoder", new LengthFieldPrepender(4));
+        pipeline.addLast("bytesEncoder", new ByteArrayEncoder());
         pipeline.addLast("handler", new ChatClientHandler());
     }
 }
